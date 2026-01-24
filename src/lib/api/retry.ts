@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { apiLogger } from './logger';
+import { apiLogger } from '../logger';
 
 export interface RetryOptions {
   maxAttempts?: number;
@@ -67,7 +67,7 @@ export async function retryWithBackoff<T>(
   }
 
   apiLogger.error(
-    { maxAttempts: opts.maxAttempts, error: lastError?.message },
+    { maxAttempts: opts.maxAttempts, error: lastError.message },
     '최대 재시도 횟수 초과'
   );
   throw lastError!;

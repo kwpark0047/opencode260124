@@ -112,7 +112,7 @@ export async function syncWorker(date?: string): Promise<SyncStats> {
     const errorMessage = error instanceof Error ? error.message : String(error);
     stats.errors++;
 
-    await syncStateRepository.setFailed(errorMessage);
+    await syncStateRepository.setFailed('public-data-portal', errorMessage);
     await notifySyncError(error as Error);
 
     syncLogger.error({ error, stats }, '동기화 실패');

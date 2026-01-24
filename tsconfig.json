@@ -13,14 +13,17 @@
     "isolatedModules": true,
     "jsx": "react-jsx",
     "incremental": true,
+    "baseUrl": ".",
     "plugins": [
       {
         "name": "next"
       }
     ],
     "paths": {
-      "@/*": ["./*"]
-    }
+      "@/*": ["./src/*"],
+      "@/app/generated/prisma": ["./app/generated/prisma"]
+    },
+
   },
   "include": [
     "next-env.d.ts",

@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import Navbar from '@/components/Navbar';
 
 export default function BusinessDetailPage({
   params,

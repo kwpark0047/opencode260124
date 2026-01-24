@@ -1,8 +1,8 @@
-import { CronJob } from 'node-cron';
+import * as cron from 'node-cron';
 import { syncWorker } from '../workers/sync-worker';
 import { syncLogger } from './logger';
 
-let syncJob: CronJob | null = null;
+let syncJob: cron.ScheduledTask | null = null;
 let isJobRunning = false;
 
 export function startScheduler(schedule: string = '0 2 * * *') {

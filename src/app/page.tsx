@@ -1,24 +1,47 @@
-import { Navbar } from '@/components/Navbar';
+import Navbar from '@/components/Navbar';
 
 export default function HomePage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
-
-      <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        <div className="mb-8">
-          <h1 className="mb-2 text-3xl font-bold text-gray-900">
+      <main className="container mx-auto px-4 py-8">
+        <div className="text-center mb-8">
+          <h1 className="mb-4 text-3xl font-bold text-gray-900">
             소상공인 정보 트래커
           </h1>
-          <p className="text-gray-600">
-            공공데이터포털에서 소상공인 정보를 자동으로 수집하고
-            조회합니다.
+          <p className="mb-6 text-lg text-gray-600">
+            공공데이터포털에서 소상공인 정보를 자동으로 수집하고 관리합니다.
           </p>
         </div>
 
         <StatsGrid />
 
-        <FeatureGrid />
+        <div className="mt-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <FeatureCard
+              title="자동 데이터 수집"
+              description="공공데이터포털 API를 통해 자동으로 소상공인 정보를 수집합니다."
+              icon="🔄"
+            />
+            <FeatureCard
+              title="신규 등록 감지"
+              description="새로 등록된 소상공인을 자동으로 감지하고 Slack으로 알림을 보냅니다."
+              icon="🆕"
+            />
+            <FeatureCard
+              title="데이터 검색"
+              description="상호명, 주소, 업종별로 소상공인을 검색할 수 있습니다."
+              icon="🔍"
+            />
+          </div>
+
+          <div className="mt-8">
+            <h2 className="mb-4 text-2xl font-bold text-gray-900">
+              최근 통계
+            </h2>
+            <StatsGrid />
+          </div>
+        </div>
       </main>
     </div>
   );
