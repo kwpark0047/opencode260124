@@ -1,65 +1,139 @@
-import Image from "next/image";
+import Navbar from './components/Navbar';
 
-export default function Home() {
+export default function HomePage() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
+    <div className="min-h-screen bg-gray-50">
+      <Navbar />
+      <main className="container mx-auto px-4 py-8">
+        <div className="text-center mb-8">
+          <h1 className="mb-4 text-3xl font-bold text-gray-900">
+            소상공인 정보 트래커
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+          <p className="mb-6 text-lg text-gray-600">
+            공공데이터포털에서 소상공인 정보를 자동으로 수집하고 관리합니다.
           </p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+
+        <StatsGrid />
+
+        <div className="mt-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <FeatureCard
+              title="자동 데이터 수집"
+              description="공공데이터포털 API를 통해 자동으로 소상공인 정보를 수집합니다."
+              icon="🔄"
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+            <FeatureCard
+              title="신규 등록 감지"
+              description="새로 등록된 소상공인을 자동으로 감지하고 Slack으로 알림을 보냅니다."
+              icon="🆕"
+            />
+            <FeatureCard
+              title="데이터 검색"
+              description="상호명, 주소, 업종별로 소상공인을 검색할 수 있습니다."
+              icon="🔍"
+            />
+          </div>
+
+          <div className="mt-8">
+            <h2 className="mb-4 text-2xl font-bold text-gray-900">
+              최근 통계
+            </h2>
+            <StatsGrid />
+          </div>
         </div>
       </main>
+    </div>
+  );
+}
+
+async function StatsGrid() {
+  const res = await fetch(`${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api/dashboard/stats`, {
+    cache: 'no-store',
+  });
+  const stats = await res.json();
+
+  return (
+    <div className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <StatCard title="전체 소상공인" value={stats.total} color="blue" />
+      <StatCard title="오늘 신규" value={stats.newToday} color="green" />
+      <StatCard title="신규 등록" value={stats.newRecords} color="yellow" />
+      <StatCard title="영업 중" value={stats.active} color="purple" />
+    </div>
+  );
+}
+
+function StatCard({
+  title,
+  value,
+  color,
+}: {
+  title: string;
+  value: number;
+  color: 'blue' | 'green' | 'yellow' | 'purple';
+}) {
+  const colorClasses = {
+    blue: 'bg-blue-50 text-blue-700',
+    green: 'bg-green-50 text-green-700',
+    yellow: 'bg-yellow-50 text-yellow-700',
+    purple: 'bg-purple-50 text-purple-700',
+  };
+
+  return (
+    <div className={`rounded-lg p-6 ${colorClasses[color]}`}>
+      <h3 className="text-sm font-medium">{title}</h3>
+      <p className="mt-2 text-3xl font-bold">{value.toLocaleString()}</p>
+    </div>
+  );
+}
+
+function FeatureGrid() {
+  const features = [
+    {
+      title: '자동 데이터 수집',
+      description: '공공데이터포털 API를 통해 자동으로 소상공인 정보를 수집합니다.',
+      icon: '🔄',
+    },
+    {
+      title: '신규 등록 감지',
+      description: '새로 등록된 소상공인을 자동으로 감지하고 알림을 보냅니다.',
+      icon: '🆕',
+    },
+    {
+      title: '데이터 검색',
+      description: '상호명, 주소, 업종별로 소상공인을 검색할 수 있습니다.',
+      icon: '🔍',
+    },
+    {
+      title: '실시간 통계',
+      description: '전체 소상공인 수, 신규 등록 수 등 실시간 통계를 확인합니다.',
+      icon: '📊',
+    },
+  ];
+
+  return (
+    <div className="grid gap-6 sm:grid-cols-2">
+      {features.map((feature) => (
+        <FeatureCard key={feature.title} {...feature} />
+      ))}
+    </div>
+  );
+}
+
+function FeatureCard({
+  title,
+  description,
+  icon,
+}: {
+  title: string;
+  description: string;
+  icon: string;
+}) {
+  return (
+    <div className="rounded-lg border border-gray-200 bg-white p-6">
+      <div className="mb-4 text-4xl">{icon}</div>
+      <h3 className="mb-2 text-lg font-semibold text-gray-900">{title}</h3>
+      <p className="text-gray-600">{description}</p>
     </div>
   );
 }

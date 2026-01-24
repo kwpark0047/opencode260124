@@ -1,0 +1,26 @@
+
+> small-business-tracker@0.1.0 dev
+> next dev
+
+(node:18641) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///home/pkw/small-business-tracker/next.config.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /home/pkw/small-business-tracker/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ▲ Next.js 14.2.35
+  - Local:        http://localhost:3000
+  - Environments: .env
+
+ ✓ Starting...
+(node:18652) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///home/pkw/small-business-tracker/next.config.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /home/pkw/small-business-tracker/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ Ready in 1610ms
+ ⚠ Found a change in next.config.js. Restarting the server to apply the changes...
+  ▲ Next.js 14.2.35
+  - Local:        http://localhost:3000
+  - Environments: .env
+
+ ✓ Starting...
+ ✓ Ready in 1562ms
+[?25h

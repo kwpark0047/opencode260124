@@ -3,6 +3,5 @@
   "outputDirectory": ".next",
   "installCommand": "npm install",
   "framework": "nextjs",
-  "name": "small-business-tracker",
-  "ignoreCommand": "npm run build"
+  "name": "small-business-tracker"
 }
