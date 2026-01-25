@@ -1,8 +1,8 @@
 import bcrypt from 'bcryptjs';
-import { PrismaClient } from './app/generated/prisma/client';
+import { PrismaClient } from '@prisma/client';
 
 // Prisma 7.x에서는 환경변수를 자동으로 읽음
-const prisma = new PrismaClient();
+const prisma = new PrismaClient({} as any);
 
 async function main() {
   console.log('시드 데이터 생성 시작...');

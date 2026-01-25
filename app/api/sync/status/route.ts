@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import { syncStateRepository } from ../lib/repositories/sync-state.repository';
-import { getSchedulerStatus } from ./lib/scheduler';
+import { syncStateRepository } from '@/app/lib/repositories/sync-state.repository';
+import { getSchedulerStatus } from '@/app/lib/scheduler';
 
 export async function GET() {
   try {

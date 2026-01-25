@@ -1,6 +1,7 @@
-import { BusinessItem } from './types/api';
-import { BusinessStatus, RecordStatus } from '../../prisma/app/generated/prisma';
-import { apiLogger } from '../logger';
+import { BusinessItem } from '@/app/types/api';
+import { PrismaClient } from '@prisma/client';
+const { BusinessStatus, RecordStatus } = PrismaClient;
+import { apiLogger } from '@/app/lib/logger';
 
 /**
  * API 응답을 데이터베이스 엔티티로 변환
@@ -28,7 +29,7 @@ export function parseBusinessItem(item: BusinessItem): Partial<{
 }> {
   try {
     return {
-      bizesId: item.bizesId || item.mgtNo,
+      bizesId: item.bizesId || item.mgtNo || '',
       name: item.bizesNm || 'Unknown',
       roadNameAddress: item.rdnmAdr || null,
       lotNumberAddress: item.lnoAdr || null,

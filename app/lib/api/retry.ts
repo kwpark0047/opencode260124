@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { apiLogger } from '../logger';
+import { apiLogger } from '@/app/lib/logger';
 
 export interface RetryOptions {
   maxAttempts?: number;
@@ -23,7 +23,7 @@ export async function retryWithBackoff<T>(
   options: RetryOptions = {}
 ): Promise<T> {
   const opts = { ...DEFAULT_OPTIONS, ...options };
-  let lastError: Error;
+  let lastError: Error | null = null;
   let delay = opts.initialDelay;
 
   for (let attempt = 1; attempt <= opts.maxAttempts; attempt++) {
@@ -67,7 +67,7 @@ export async function retryWithBackoff<T>(
   }
 
   apiLogger.error(
-    { maxAttempts: opts.maxAttempts, error: lastError.message },
+    { maxAttempts: opts.maxAttempts, error: lastError?.message },
     '최대 재시도 횟수 초과'
   );
   throw lastError!;

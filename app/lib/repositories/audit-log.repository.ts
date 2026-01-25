@@ -1,5 +1,5 @@
-import { db } from './db';
-import { dbLogger } from './logger';
+import { db } from '@/app/lib/db';
+import { dbLogger } from '@/app/lib/logger';
 
 export interface AuditLogInput {
   businessId: string;

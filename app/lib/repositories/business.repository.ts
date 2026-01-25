@@ -1,6 +1,6 @@
-import { db } from './db';
-import { dbLogger } from '../logger';
-import { BusinessStatus, RecordStatus } from '../../prisma/app/generated/prisma';
+import { db } from '@/app/lib/db';
+import { dbLogger } from '@/app/lib/logger';
+import { PrismaClient, BusinessStatus, RecordStatus } from '@prisma/client';
 
 export interface CreateBusinessInput {
   bizesId: string;

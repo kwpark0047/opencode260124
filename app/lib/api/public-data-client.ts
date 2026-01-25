@@ -1,6 +1,6 @@
 import axios, { AxiosInstance } from 'axios';
 import axiosRetry from 'axios-retry';
-import { apiLogger } from '../logger';
+import { apiLogger } from '@/app/lib/logger';
 
 // 공공데이터포털 API 설정
 const API_BASE_URL = 'https://apis.data.go.kr/B553077/api/open/sdsc2';

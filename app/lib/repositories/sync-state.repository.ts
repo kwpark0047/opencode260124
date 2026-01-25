@@ -1,5 +1,5 @@
-import { db } from './db';
-import { syncLogger } from '../logger';
+import { db } from '@/app/lib/db';
+import { syncLogger } from '@/app/lib/logger';
 
 export interface SyncStateUpdate {
   syncStatus?: 'idle' | 'running' | 'success' | 'failed';
@@ -7,6 +7,7 @@ export interface SyncStateUpdate {
   lastBusinessId?: string;
   newRecordsCount?: number;
   totalSynced?: number;
+  lastSyncedAt?: Date;
 }
 
 export class SyncStateRepository {

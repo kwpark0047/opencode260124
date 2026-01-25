@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { manualSync } from '.././workers/sync-worker';
-import { syncLogger } from ../lib/logger';
+import { manualSync } from '@/app/workers/sync-worker';
+import { syncLogger } from '@/app/lib/logger';
 
 export async function POST(request: NextRequest) {
   syncLogger.info('수동 동기화 API 호출');

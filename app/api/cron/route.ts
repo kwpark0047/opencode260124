@@ -1,5 +1,5 @@
-import { startScheduler } from ./lib/scheduler';
-import { syncLogger } from ../lib/logger';
+import { startScheduler } from '@/app/lib/scheduler';
+import { syncLogger } from '@/app/lib/logger';
 
 const SCHEDULE = process.env.SYNC_SCHEDULE || '0 2 * * *';
 

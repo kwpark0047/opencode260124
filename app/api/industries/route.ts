@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { businessRepository } from ../lib/repositories/business.repository';
+import { businessRepository } from '@/app/lib/repositories/business.repository';
 
 export async function GET() {
   try {

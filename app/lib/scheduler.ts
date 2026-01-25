@@ -1,8 +1,8 @@
 import * as cron from 'node-cron';
-import { syncWorker } from '../workers/sync-worker';
-import { syncLogger } from './logger';
+import { syncWorker } from '@/app/workers/sync-worker';
+import { syncLogger } from '@/app/lib/logger';
 
-let syncJob: cron.ScheduledTask | null = null;
+let syncJob: any | null = null;
 let isJobRunning = false;
 
 export function startScheduler(schedule: string = '0 2 * * *') {
@@ -13,7 +13,7 @@ export function startScheduler(schedule: string = '0 2 * * *') {
 
   syncLogger.info({ schedule }, '스케줄러 시작');
 
-  syncJob = new CronJob(
+  syncJob = cron.schedule(
     schedule,
     async () => {
       if (isJobRunning) {
@@ -29,14 +29,7 @@ export function startScheduler(schedule: string = '0 2 * * *') {
       } finally {
         isJobRunning = false;
       }
-    },
-    null,
-    true,
-    'Asia/Seoul',
-    null,
-    false,
-    null,
-    true
+    }
   );
 
   syncJob.start();

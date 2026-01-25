@@ -1,5 +1,5 @@
 import { IncomingWebhook } from '@slack/webhook';
-import { notificationLogger } from '../logger';
+import { notificationLogger } from '@/app/lib/logger';
 
 const SLACK_WEBHOOK_URL = process.env.SLACK_WEBHOOK_URL;
 
