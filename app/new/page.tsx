@@ -1,4 +1,18 @@
 import Navbar from '../components/Navbar';
+import { BusinessTableRow } from '../components/business/BusinessTableRow';
+import { createApiUrl } from '../lib/constants';
+
+interface Business {
+  id: string;
+  bizesId: string;
+  name: string;
+  roadNameAddress: string | null;
+  lotNumberAddress: string | null;
+  businessName: string | null;
+  status: string;
+  recordStatus: string;
+  createdAt: string;
+}
 
 export default function NewBusinessesPage() {
   return (
@@ -22,10 +36,14 @@ export default function NewBusinessesPage() {
 }
 
 async function NewBusinessesList() {
-  const res = await fetch(
-    `${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api/businesses?recordStatus=new&limit=50`,
-    { cache: 'no-store' }
-  );
+  const res = await fetch(createApiUrl('/api/businesses?recordStatus=new&limit=50'), {
+    cache: 'no-store'
+  });
+  
+  if (!res.ok) {
+    throw new Error('신규 소상공인 목록을 불러오는데 실패했습니다.');
+  }
+  
   const data = await res.json();
 
   return (
@@ -43,6 +61,9 @@ async function NewBusinessesList() {
               업종
             </th>
             <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+              상태
+            </th>
+            <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
               등록일
             </th>
             <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
@@ -52,43 +73,17 @@ async function NewBusinessesList() {
         </thead>
         <tbody className="divide-y divide-gray-200 bg-white">
           {data.items && data.items.length > 0 ? (
-            data.items.map((business: any) => (
-              <tr key={business.id} className="hover:bg-blue-50">
-                <td className="whitespace-nowrap px-6 py-4">
-                  <div className="flex items-center">
-                    <span className="mr-2 text-blue-600">🆕</span>
-                    <div className="text-sm font-medium text-gray-900">
-                      {business.name}
-                    </div>
-                  </div>
-                </td>
-                <td className="px-6 py-4">
-                  <div className="text-sm text-gray-900">
-                    {business.roadNameAddress || business.lotNumberAddress || '-'}
-                  </div>
-                </td>
-                <td className="px-6 py-4">
-                  <span className="inline-flex rounded-full bg-blue-100 px-2 py-1 text-xs font-semibold text-blue-800">
-                    {business.businessName || '-'}
-                  </span>
-                </td>
-                <td className="px-6 py-4 text-sm text-gray-500">
-                  {new Date(business.createdAt).toLocaleDateString('ko-KR')}
-                </td>
-                <td className="px-6 py-4">
-                  <a
-                    href={`/businesses/${business.id}`}
-                    className="text-blue-600 hover:text-blue-900"
-                  >
-                    상세
-                  </a>
-                </td>
-              </tr>
+            data.items.map((business: Business) => (
+              <BusinessTableRow 
+                key={business.id} 
+                business={business} 
+                showNewBadge={true} 
+              />
             ))
           ) : (
             <tr>
               <td
-                colSpan={5}
+                colSpan={6}
                 className="px-6 py-12 text-center text-gray-500"
               >
                 신규 등록된 소상공인이 없습니다.

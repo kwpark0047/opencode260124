@@ -1,17 +1,9 @@
-import { NextResponse } from 'next/server';
 import { businessRepository } from '@/app/lib/repositories/business.repository';
+import { handleApiCall } from '@/app/lib/api/handlers';
 
 export async function GET() {
-  try {
-    const stats = await businessRepository.getStats();
-
-    return NextResponse.json(stats);
-  } catch (error) {
-    return NextResponse.json(
-      {
-        error: error instanceof Error ? error.message : '통계 조회 실패',
-      },
-      { status: 500 }
-    );
-  }
+  return handleApiCall(
+    () => businessRepository.getStats(),
+    '통계 조회 실패'
+  );
 }

@@ -1,33 +1,29 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 import { businessRepository } from '@/app/lib/repositories/business.repository';
+import { handleApiCall } from '@/app/lib/api/handlers';
+
+type BusinessStatus = 'pending' | 'active' | 'inactive' | 'dissolved' | 'pending_renewal';
+type RecordStatus = 'new' | 'synced' | 'verified';
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
 
   const search = searchParams.get('search') || undefined;
-  const status = searchParams.get('status') as any || undefined;
-  const recordStatus = searchParams.get('recordStatus') as any || undefined;
+  const status = searchParams.get('status') as BusinessStatus | undefined;
+  const recordStatus = searchParams.get('recordStatus') as RecordStatus | undefined;
   const businessCode = searchParams.get('businessCode') || undefined;
   const page = parseInt(searchParams.get('page') || '1');
   const limit = parseInt(searchParams.get('limit') || '20');
 
-  try {
-    const result = await businessRepository.search({
+  return handleApiCall(
+    async () => businessRepository.search({
       search,
       status,
       recordStatus,
       businessCode,
       page,
       limit,
-    });
-
-    return NextResponse.json(result);
-  } catch (error) {
-    return NextResponse.json(
-      {
-        error: error instanceof Error ? error.message : '소상공인 목록 조회 실패',
-      },
-      { status: 500 }
-    );
-  }
+    }),
+    '소상공인 목록 조회 실패'
+  );
 }

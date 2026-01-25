@@ -1,6 +1,18 @@
 import { BusinessItem } from '@/app/types/api';
-import { PrismaClient } from '@prisma/client';
-const { BusinessStatus, RecordStatus } = PrismaClient;
+
+enum BusinessStatus {
+  pending = 'pending',
+  active = 'active', 
+  inactive = 'inactive',
+  dissolved = 'dissolved',
+  pending_renewal = 'pending_renewal'
+}
+
+enum RecordStatus {
+  new = 'new',
+  synced = 'synced', 
+  verified = 'verified'
+}
 import { apiLogger } from '@/app/lib/logger';
 
 /**

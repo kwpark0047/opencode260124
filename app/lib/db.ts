@@ -1,15 +1,15 @@
-import { PrismaClient } from '@prisma/client';
+import { Prisma } from '../generated/prisma/client';
 import { supabase } from '@/app/lib/supabase';
 
 // 전역 Prisma 클라이언트 (개발 환경에서 핫 리로딩 방지)
-const globalForPrisma = global as unknown as { prisma: PrismaClient };
+declare global {
+  var __prisma: Prisma.PrismaClient | undefined;
+}
 
-export const db =
-  globalForPrisma.prisma ||
-  new PrismaClient({} as any);
+export const db = globalThis.__prisma || new Prisma.PrismaClient();
 
 if (process.env.NODE_ENV !== 'production') {
-  globalForPrisma.prisma = db;
+  globalThis.__prisma = db;
 }
 
 // 데이터베이스 연결 테스트

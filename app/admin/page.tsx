@@ -1,4 +1,6 @@
 import Navbar from '../components/Navbar';
+import { StatCard } from '../components/ui/StatCard';
+import { createApiUrl } from '../lib/constants';
 
 export default function AdminPage() {
   return (
@@ -22,24 +24,26 @@ export default function AdminPage() {
 }
 
 async function AdminDashboard() {
-  const statsRes = await fetch(
-    `${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api/dashboard/stats`,
-    { cache: 'no-store' }
-  );
-  const stats = await statsRes.json();
+  const [statsRes, syncStateRes] = await Promise.all([
+    fetch(createApiUrl('/api/dashboard/stats'), { cache: 'no-store' }),
+    fetch(createApiUrl('/api/sync/status'), { cache: 'no-store' })
+  ]);
 
-  const syncStateRes = await fetch(
-    `${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api/sync/status`,
-    { cache: 'no-store' }
-  );
-  const syncStateData = await syncStateRes.json();
+  if (!statsRes.ok || !syncStateRes.ok) {
+    throw new Error('데이터를 불러오는데 실패했습니다.');
+  }
+
+  const [stats, syncStateData] = await Promise.all([
+    statsRes.json(),
+    syncStateRes.json()
+  ]);
 
   return (
     <div className="grid gap-6 lg:grid-cols-2">
-      <StatsCard title="전체 소상공인" value={stats.total} icon="🏪" />
-      <StatsCard title="신규 등록" value={stats.newRecords} icon="🆕" />
-      <StatsCard title="영업 중" value={stats.active} icon="✅" />
-      <StatsCard title="오늘 신규" value={stats.newToday} icon="📅" />
+      <StatCard title="전체 소상공인" value={stats.total} icon="🏪" />
+      <StatCard title="신규 등록" value={stats.newRecords} icon="🆕" />
+      <StatCard title="영업 중" value={stats.active} icon="✅" />
+      <StatCard title="오늘 신규" value={stats.newToday} icon="📅" />
 
       <SyncStatusCard syncState={syncStateData} />
       <SchedulerStatusCard schedulerStatus={syncStateData} />
@@ -49,29 +53,7 @@ async function AdminDashboard() {
   );
 }
 
-function StatsCard({
-  title,
-  value,
-  icon,
-}: {
-  title: string;
-  value: number;
-  icon: string;
-}) {
-  return (
-    <div className="rounded-lg border border-gray-200 bg-white p-6 shadow">
-      <div className="flex items-center justify-between">
-        <div>
-          <h3 className="text-sm font-medium text-gray-500">{title}</h3>
-          <p className="mt-2 text-3xl font-bold text-gray-900">
-            {value.toLocaleString()}
-          </p>
-        </div>
-        <div className="text-4xl">{icon}</div>
-      </div>
-    </div>
-  );
-}
+
 
 function SyncStatusCard({ syncState }: { syncState: { syncStatus: any; lastSyncedAt: any; errorMessage: any; } }) {
   const statusColors = {

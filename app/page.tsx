@@ -1,4 +1,6 @@
 import Navbar from './components/Navbar';
+import { StatCard } from './components/ui/StatCard';
+import { createApiUrl } from './lib/constants';
 
 export default function HomePage() {
   return (
@@ -14,7 +16,7 @@ export default function HomePage() {
           </p>
         </div>
 
-        <StatsGrid />
+        <StatsSection />
 
         <div className="mt-12">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -34,23 +36,21 @@ export default function HomePage() {
               icon="🔍"
             />
           </div>
-
-          <div className="mt-8">
-            <h2 className="mb-4 text-2xl font-bold text-gray-900">
-              최근 통계
-            </h2>
-            <StatsGrid />
-          </div>
         </div>
       </main>
     </div>
   );
 }
 
-async function StatsGrid() {
-  const res = await fetch(`${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api/dashboard/stats`, {
+async function StatsSection() {
+  const res = await fetch(createApiUrl('/api/dashboard/stats'), {
     cache: 'no-store',
   });
+  
+  if (!res.ok) {
+    throw new Error('통계 데이터를 불러오는데 실패했습니다.');
+  }
+  
   const stats = await res.json();
 
   return (
@@ -63,62 +63,7 @@ async function StatsGrid() {
   );
 }
 
-function StatCard({
-  title,
-  value,
-  color,
-}: {
-  title: string;
-  value: number;
-  color: 'blue' | 'green' | 'yellow' | 'purple';
-}) {
-  const colorClasses = {
-    blue: 'bg-blue-50 text-blue-700',
-    green: 'bg-green-50 text-green-700',
-    yellow: 'bg-yellow-50 text-yellow-700',
-    purple: 'bg-purple-50 text-purple-700',
-  };
 
-  return (
-    <div className={`rounded-lg p-6 ${colorClasses[color]}`}>
-      <h3 className="text-sm font-medium">{title}</h3>
-      <p className="mt-2 text-3xl font-bold">{value.toLocaleString()}</p>
-    </div>
-  );
-}
-
-function FeatureGrid() {
-  const features = [
-    {
-      title: '자동 데이터 수집',
-      description: '공공데이터포털 API를 통해 자동으로 소상공인 정보를 수집합니다.',
-      icon: '🔄',
-    },
-    {
-      title: '신규 등록 감지',
-      description: '새로 등록된 소상공인을 자동으로 감지하고 알림을 보냅니다.',
-      icon: '🆕',
-    },
-    {
-      title: '데이터 검색',
-      description: '상호명, 주소, 업종별로 소상공인을 검색할 수 있습니다.',
-      icon: '🔍',
-    },
-    {
-      title: '실시간 통계',
-      description: '전체 소상공인 수, 신규 등록 수 등 실시간 통계를 확인합니다.',
-      icon: '📊',
-    },
-  ];
-
-  return (
-    <div className="grid gap-6 sm:grid-cols-2">
-      {features.map((feature) => (
-        <FeatureCard key={feature.title} {...feature} />
-      ))}
-    </div>
-  );
-}
 
 function FeatureCard({
   title,

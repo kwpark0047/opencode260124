@@ -1,8 +1,9 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
 import Navbar from '../components/Navbar';
+import { BusinessTableRow } from '../components/business/BusinessTableRow';
 
 interface Business {
   id: string;
@@ -16,10 +17,13 @@ interface Business {
   createdAt: string;
 }
 
+type BusinessStatus = 'pending' | 'active' | 'inactive' | 'dissolved' | 'pending_renewal';
+type RecordStatus = 'new' | 'synced' | 'verified';
+
 interface SearchParams {
   search?: string;
-  status?: string;
-  recordStatus?: string;
+  status?: BusinessStatus;
+  recordStatus?: RecordStatus;
   businessCode?: string;
   page?: number;
 }
@@ -29,11 +33,7 @@ export default function BusinessesPage() {
   const [searchParams, setSearchParams] = useState<SearchParams>({ page: 1 });
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchBusinesses();
-  }, [searchParams, fetchBusinesses]);
-
-  async function fetchBusinesses() {
+  const fetchBusinesses = useCallback(async () => {
     setLoading(true);
     try {
       const params = new URLSearchParams();
@@ -45,6 +45,7 @@ export default function BusinessesPage() {
       params.set('limit', '20');
 
       const res = await fetch(`/api/businesses?${params}`);
+      if (!res.ok) throw new Error('API 요청 실패');
       const data = await res.json();
       setBusinesses(data.items || []);
     } catch (error) {
@@ -52,7 +53,11 @@ export default function BusinessesPage() {
     } finally {
       setLoading(false);
     }
-  }
+  }, [searchParams]);
+
+  useEffect(() => {
+    fetchBusinesses();
+  }, [fetchBusinesses]);
 
   function handleSearch(e: React.FormEvent) {
     e.preventDefault();
@@ -122,7 +127,7 @@ function SearchForm({ onSearch }: { onSearch: (e: React.FormEvent) => void }) {
             className="w-full rounded-md border-gray-300 px-4 py-2 text-sm"
           >
             <option value="">전체</option>
-            <option value="pending">대기</option>
+              <option value="pending">대기</option>
             <option value="active">영업중</option>
             <option value="inactive">휴업</option>
             <option value="dissolved">폐업</option>
@@ -170,78 +175,10 @@ function BusinessTable({ businesses }: { businesses: Business[] }) {
         </thead>
         <tbody className="divide-y divide-gray-200 bg-white">
           {businesses.map((business) => (
-            <BusinessRow key={business.id} business={business} />
+            <BusinessTableRow key={business.id} business={business} />
           ))}
         </tbody>
       </table>
     </div>
   );
-}
-
-function BusinessRow({ business }: { business: Business }) {
-  const statusColors = {
-    pending: 'bg-yellow-100 text-yellow-800',
-    active: 'bg-green-100 text-green-800',
-    inactive: 'bg-gray-100 text-gray-800',
-    dissolved: 'bg-red-100 text-red-800',
-  };
-
-  const recordStatusColors = {
-    new: 'bg-blue-100 text-blue-800',
-    synced: 'bg-gray-100 text-gray-800',
-    verified: 'bg-purple-100 text-purple-800',
-  };
-
-  return (
-    <tr className="hover:bg-gray-50">
-      <td className="whitespace-nowrap px-6 py-4">
-        <div className="text-sm font-medium text-gray-900">
-          {business.name}
-        </div>
-        <div className="text-xs text-gray-500">{business.bizesId}</div>
-      </td>
-      <td className="px-6 py-4">
-        <div className="text-sm text-gray-900">
-          {business.roadNameAddress || business.lotNumberAddress || '-'}
-        </div>
-      </td>
-      <td className="px-6 py-4">
-        <span className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold ${
-          statusColors[business.status as keyof typeof statusColors] ||
-          'bg-gray-100 text-gray-800'
-        }`}>
-          {business.businessName || '-'}
-        </span>
-      </td>
-      <td className="px-6 py-4">
-        <span className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold ${
-          statusColors[business.status as keyof typeof statusColors] ||
-          'bg-gray-100 text-gray-800'
-        }`}>
-          {getStatusText(business.status)}
-        </span>
-      </td>
-      <td className="px-6 py-4 text-sm text-gray-500">
-        {new Date(business.createdAt).toLocaleDateString('ko-KR')}
-      </td>
-      <td className="px-6 py-4">
-        <Link
-          href={`/businesses/${business.id}`}
-          className="text-blue-600 hover:text-blue-900"
-        >
-          상세
-        </Link>
-      </td>
-    </tr>
-  );
-}
-
-function getStatusText(status: string): string {
-  const statusText: Record<string, string> = {
-    pending: '대기',
-    active: '영업중',
-    inactive: '휴업',
-    dissolved: '폐업',
-  };
-  return statusText[status] || status;
 }

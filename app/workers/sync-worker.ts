@@ -63,7 +63,7 @@ export async function syncWorker(date?: string): Promise<SyncStats> {
           const existing = await businessRepository.findByBizesId(item.bizesId!);
           const isNew = !existing;
 
-          await businessRepository.upsertMany([item] as any);
+          await businessRepository.upsertMany([item]);
 
           if (isNew) {
             stats.newRecords++;
