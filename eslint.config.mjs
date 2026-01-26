@@ -3,6 +3,10 @@ import { defineConfig } from "@eslint/config";
 export default defineConfig([
   {
     files: ["**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx"],
-    extends: ["next/core-web-vitals", "next/typescript"],
+    extends: ["next/core-web-vitals"],
+  },
+  {
+    files: ["**/*.ts", "**/*.tsx"],
+    extends: ["next/typescript"],
   },
 ]);

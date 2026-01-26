@@ -60,21 +60,42 @@ export async function syncWorker(date?: string): Promise<SyncStats> {
 
       for (const item of parsedItems) {
         try {
-          const existing = await businessRepository.findByBizesId(item.bizesId!);
+          const existing = await businessRepository.findByBizesId(item.bizesId || '');
           const isNew = !existing;
 
-          await businessRepository.upsertMany([item]);
+          const businessInput = {
+            bizesId: item.bizesId || '',
+            name: item.name || '',
+            roadNameAddress: item.roadNameAddress || null,
+            lotNumberAddress: item.lotNumberAddress || null,
+            phone: item.phone || null,
+            latitude: item.latitude || null,
+            longitude: item.longitude || null,
+            businessCode: item.businessCode || null,
+            businessName: item.businessName || null,
+            indsLclsCd: item.indsLclsCd || null,
+            indsLclsNm: item.indsLclsNm || null,
+            indsMclsCd: item.indsMclsCd || null,
+            indsMclsNm: item.indsMclsNm || null,
+            indsSclsCd: item.indsSclsCd || null,
+            indsSclsNm: item.indsSclsNm || null,
+            status: item.status as 'pending' | 'active' | 'inactive' | 'dissolved' | 'pending_renewal',
+            recordStatus: item.recordStatus as 'new' | 'synced' | 'verified',
+            dataSource: item.dataSource || 'test',
+          };
 
-          if (isNew) {
+          await businessRepository.upsertMany([businessInput]);
+
+      if (isNew) {
             stats.newRecords++;
             stats.totalSynced++;
 
-            await notifyNewBusiness({
-              businessId: item.bizesId!,
-              name: item.name!,
-              address: item.roadNameAddress || item.lotNumberAddress || 'N/A',
-              businessType: item.businessName || null,
-            });
+          await notifyNewBusiness({
+            businessId: businessInput.bizesId,
+            name: businessInput.name,
+            address: businessInput.roadNameAddress || businessInput.lotNumberAddress || 'N/A',
+            businessType: businessInput.businessName || null,
+          });
           } else {
             stats.updatedRecords++;
             stats.totalSynced++;

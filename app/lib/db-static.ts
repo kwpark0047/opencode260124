@@ -1,4 +1,4 @@
-import { PrismaClient } from '../generated/prisma/client';
+import { dbLogger, syncLogger } from '@/app/lib/logger';
 
 const mockBusinesses = [
   {
@@ -48,12 +48,39 @@ const mockBusinesses = [
     indsSclsCd: 'I11A',
     indsSclsNm: '일반한식',
     dataSource: 'test'
+  },
+  {
+    id: '3',
+    bizesId: 'TEST003',
+    name: '테스트 상가 3',
+    roadNameAddress: '서울시 마포구 마포대로 789',
+    lotNumberAddress: '서울시 마포구 공덕동 789-10',
+    phone: '02-555-7777',
+    businessName: '의류',
+    status: 'inactive',
+    recordStatus: 'verified',
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    lastSyncedAt: new Date().toISOString(),
+    latitude: '37.5663',
+    longitude: '126.9019',
+    businessCode: '98765',
+    indsLclsCd: 'G',
+    indsLclsNm: '도소매',
+    indsMclsCd: 'G12',
+    indsMclsNm: '의류',
+    indsSclsCd: 'G12A',
+    indsSclsNm: '일반의류',
+    dataSource: 'test'
   }
 ];
 
-class MockBusinessRepository {
+class StaticBusinessRepository {
   async createMany(data: any[]) {
-    return { count: data.length };
+    dbLogger.info({ count: data.length }, '소상공인 대량 생성 시작');
+    const result = { count: data.length };
+    dbLogger.info({ created: result.count }, '소상공인 대량 생성 완료');
+    return result;
   }
 
   async search(options: any = {}) {
@@ -139,7 +166,7 @@ class MockBusinessRepository {
   }
 }
 
-class MockSyncStateRepository {
+class StaticSyncStateRepository {
   async getSyncState() {
     return {
       id: '1',
@@ -159,16 +186,13 @@ export const db = {
     createMany: (data: any) => Promise.resolve({ count: data.data?.length || 0 }),
     findMany: (options: any) => Promise.resolve([]),
     findUnique: (options: any) => Promise.resolve(null),
-    findFirst: (options: any) => Promise.resolve(null),
     count: (options: any) => Promise.resolve(0),
     upsert: (data: any) => Promise.resolve({ id: 'mock' }),
     update: (data: any) => Promise.resolve({ id: 'mock' }),
-    create: (data: any) => Promise.resolve({ id: 'mock' }),
   },
   syncState: {
     findUnique: (options: any) => Promise.resolve(null),
     update: (data: any) => Promise.resolve({ id: 'mock' }),
-    create: (data: any) => Promise.resolve({ id: 'mock' }),
   },
   auditLog: {
     create: (data: any) => Promise.resolve({ id: 'mock' }),
@@ -181,15 +205,14 @@ export const db = {
   $disconnect: () => Promise.resolve(),
 };
 
-export const mockBusinessRepository = new MockBusinessRepository();
-export const mockSyncStateRepository = new MockSyncStateRepository();
+export const staticBusinessRepository = new StaticBusinessRepository();
+export const staticSyncStateRepository = new StaticSyncStateRepository();
+
 export async function testConnection() {
-  console.log('Using mock database - connection test skipped');
   return true;
 }
 
 export async function disconnectDatabase() {
-  console.log('Mock database - disconnect skipped');
 }
 
 export default db;

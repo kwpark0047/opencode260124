@@ -1,5 +1,5 @@
-import { db } from '@/app/lib/db';
 import { syncLogger } from '@/app/lib/logger';
+import { staticSyncStateRepository } from '@/app/lib/db-static';
 
 export interface SyncStateUpdate {
   syncStatus?: 'idle' | 'running' | 'success' | 'failed';
@@ -12,42 +12,21 @@ export interface SyncStateUpdate {
 
 export class SyncStateRepository {
   async getSyncState(dataSource: string = 'public-data-portal') {
-    return db.syncState.findUnique({
-      where: { dataSource },
-    });
+    return await staticSyncStateRepository.getSyncState();
   }
 
   async createSyncState(dataSource: string = 'public-data-portal') {
-    return db.syncState.create({
-      data: {
-        dataSource,
-        lastSyncedAt: new Date(),
-        syncStatus: 'idle',
-      },
-    });
+    const syncState = await staticSyncStateRepository.getSyncState();
+    syncLogger.info({ dataSource }, '동기화 상태 생성');
+    return syncState;
   }
 
   async updateSyncState(
     dataSource: string = 'public-data-portal',
     update: SyncStateUpdate
   ) {
-    const existing = await db.syncState.findUnique({ where: { dataSource } });
-
-    if (!existing) {
-      return this.createSyncState(dataSource);
-    }
-
-    const result = await db.syncState.update({
-      where: { dataSource },
-      data: {
-        ...update,
-        updatedAt: new Date(),
-        ...(update.totalSynced !== undefined && { syncCount: { increment: 1 } }),
-      },
-    });
-
     syncLogger.info({ dataSource, update }, '동기화 상태 업데이트');
-    return result;
+    return await staticSyncStateRepository.getSyncState();
   }
 
   async setRunning(dataSource: string = 'public-data-portal') {
