@@ -1,4 +1,4 @@
-export const API_BASE_URL = process.env.NEXTAUTH_URL || 'http://localhost:3000';
+export const API_BASE_URL = process.env.NEXTAUTH_URL || `http://localhost:${process.env.PORT || 3001}`;
 
 export function createApiUrl(path: string): string {
   return `${API_BASE_URL}${path}`;

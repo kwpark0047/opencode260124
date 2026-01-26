@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
 import Navbar from '../components/Navbar';
 import { BusinessTableRow } from '../components/business/BusinessTableRow';
+import { createApiUrl } from '../lib/constants';
 
 interface Business {
   id: string;
@@ -44,7 +45,7 @@ export default function BusinessesPage() {
       params.set('page', String(searchParams.page || 1));
       params.set('limit', '20');
 
-      const res = await fetch(`/api/businesses?${params}`);
+      const res = await fetch(createApiUrl(`/api/businesses?${params}`));
       if (!res.ok) throw new Error('API 요청 실패');
       const data = await res.json();
       setBusinesses(data.items || []);
