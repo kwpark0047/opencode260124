@@ -52,6 +52,12 @@ const businesses = [
   }
 ];
 
+export async function generateStaticParams() {
+  return businesses.map((business) => ({
+    id: business.id,
+  }));
+}
+
 export default function BusinessDetailPage({
   params,
 }: {
